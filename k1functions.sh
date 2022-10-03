@@ -26,8 +26,8 @@ function k1getifaces () {
         if [ -n $IP ]
         then       
             echo $iface
-            echo $IP
-            echo '············'
+        echo $IP
+        echo '············'
         fi
     done
 }
@@ -39,7 +39,16 @@ function k1cheats () {
 
 # Edit your cheats
 function k1editcheats () {
-    editor ~/.cheats
+    if [[ -z $(which editor | grep found) ]]
+    then
+        editor ~/.cheats
+    elif [[ -z $(which vim | grep found) ]]
+    then
+        vim ~/.cheats
+    elif [[ -z $(which nano | grep found) ]]
+    then
+        nano ~/.cheats
+    fi
     echo 'aHR0cHM6Ly93d3cueW91dHViZS5jb20vd2F0Y2hcP3ZcPWRRdzR3OVdnWGNRCg=='
     echo "You cheater!, at least share your cheats!"
     echo 'You can change the default editor with "sudo update-alternatives --config editor"'
@@ -47,22 +56,22 @@ function k1editcheats () {
 
 # Upgrade your debian based or arch based distro **QUICK**
 function k1upgrade () {
-    if [ -z $(which apt | grep found) ]
+    if [[ -z $(which apt | grep found) ]]
     then 
         sudo apt update
         sudo apt upgrade -y
         sudo apt dist-upgrade -y
         sudo apt full-upgrade -y
-    elif [ -z $(which pacman | grep found) ]
+    elif [[ -z $(which pacman | grep found) ]]
     then
-        if [ -z $(which reflector | grep found) ]
+        if [[ -n $(which reflector | grep found) ]]
         then
             sudo pacman -S reflector
         fi
         sudo reflector --verbose --country='Spain' --country='Germany'  --country='France'  -l 10 -p http --sort rate --save /etc/pacman.d/mirrorlist
         sudo pacman -Sc --noconfirm
         sudo pacman -Syu --noconfirm
-        if [ -z $(which yay | grep found) ]
+        if [[ -z $(which yay | grep found) ]]
         then
             yay -Syu --aur --noconfirm
         fi
