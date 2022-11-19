@@ -1,18 +1,18 @@
 #!/bin/bash
 # Run a python http server but list the files with the link, defining the interface
 function k1simplehttplist () {
-    interface=$1
-    if [ -z $1 ]
+    interface="$1"
+    if [ -z "$1" ]
     then
         echo 'Usage: simplehttplist <interface>. ex: simplehttplist eth0'
         return
     fi
 
-    address=$(ifconfig $interface 2> /dev/null | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p')
+    address=$(ifconfig "$interface" 2> /dev/null | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p')
 
     for file in *
     do
-        echo http://$address:8080/$file
+        echo http://"$address":8080/"$file"
     done
 
     python -m SimpleHTTPServer 8080
@@ -22,11 +22,11 @@ function k1simplehttplist () {
 function k1getifaces () {
     for iface in $(ip a | grep "state UP" | cut -d ' ' -f 2 | tr -d ':')  
     do
-        IP=$(ip addr show dev $iface | grep inet | cut -d ' ' -f 6) 2> /dev/null
-        if [ -n $IP ]
+        IP=$(ip addr show dev "$iface" | grep inet | cut -d ' ' -f 6) 2> /dev/null
+        if [[ -n "$IP" ]]
         then       
-            echo $iface
-        echo $IP
+            echo "$iface"
+        echo "$IP"
         echo '············'
         fi
     done
@@ -80,23 +80,45 @@ function k1upgrade () {
 
 # Set target function "A-la-metasploit" 
 function k1targetset () {
-    echo $1 > ~/target.txt
-    TARGET=$1
+    echo "$1" > ~/target.txt
+    TARGET="$1"
     URLTARGET="http://$TARGET/"   
-    echo 'Now you can use $TARGET as a shortcut of' $TARGET
+    echo 'Now you can use $TARGET as a shortcut of' "$TARGET"
 }
 TARGET=$(cat ~/target.txt)
 URLTARGET="http://$TARGET/"
 
 # Flag format functions 
 function k1md5flagger () {
-    echo $(date +"%d/%m/%Y %T") $1 flag\{`printf $1|md5sum|cut -f1 -d " "`\} >> /home/$(whoami)/flags.log
-    cat /home/$(whoami)/flags.log | tail
+    echo "$(date +"%d/%m/%Y %T")" "$1" flag\{"$(printf "$1"|md5sum|cut -f1 -d " ")"\} >> /home/"$(whoami)"/flags.log
+    cat /home/"$(whoami)"/flags.log | tail
     echo "Flag was stored on /home/$(whoami)/flags.log"
 }
 
 function k1flagger () {
-    echo $(date +"%d/%m/%Y %T") flag\{`printf $1`\} >> /home/$(whoami)/flags.log
-    cat /home/$(whoami)/flags.log | tail
+    echo "$(date +"%d/%m/%Y %T")" flag\{"$(printf "$1")"\} >> /home/"$(whoami)"/flags.log
+    cat /home/"$(whoami)"/flags.log | tail
     echo "Flag was stored on /home/$(whoami)/flags.log"
 }
+
+# Does disk smart for each disk
+function k1diskcheck () {
+    disks=($(lsblk -l | grep disk | grep -v SWAP | tr -sC 1 | cut -d " " -f 1))
+    for i in "${disks[@]}"
+    do
+        sudo smartctl -a "/dev/$i" | grep -i "result"
+    done
+}
+
+function k1index () {
+    find $(pwd) -not -path "*/?snapshot/*" -not -path "*/?recycle/*" -not -path "*/@eaDir/*" | sort > Index.txt
+}
+
+function k1location () {
+echo '───────────────────────────────────── ─ ─ ─ ─ ┄ ┄ · 
+k1functions: **L O A D E D**'" from $(pwd)"'
+───────────────────────────────────── ─ ─ ─ ─ ┄ ┄ · 
+'
+}
+
+#k1location
