@@ -88,13 +88,14 @@ function k1targetset () {
 TARGET=$(cat ~/target.txt)
 URLTARGET="http://$TARGET/"
 
-# Flag format functions 
+# Flag in md5 format
 function k1md5flagger () {
     echo "$(date +"%d/%m/%Y %T")" "$1" flag\{"$(printf "$1"|md5sum|cut -f1 -d " ")"\} >> /home/"$(whoami)"/flags.log
     cat /home/"$(whoami)"/flags.log | tail
     echo "Flag was stored on /home/$(whoami)/flags.log"
 }
 
+# Flag in plaintext
 function k1flagger () {
     echo "$(date +"%d/%m/%Y %T")" flag\{"$(printf "$1")"\} >> /home/"$(whoami)"/flags.log
     cat /home/"$(whoami)"/flags.log | tail
@@ -110,8 +111,19 @@ function k1diskcheck () {
     done
 }
 
+# Indexes a folder, only filenames.
 function k1index () {
     find $(pwd) -not -path "*/?snapshot/*" -not -path "*/?recycle/*" -not -path "*/@eaDir/*" | sort > Index.txt
+}
+
+# Copies the specified file or folder adding .bak to the name
+function k1bak () {
+    cp -r $1 $1.bak
+}
+
+# Recovers the specified file from its .bak backup
+function k1rec () {
+    cp -r $1.bak $1
 }
 
 function k1location () {
