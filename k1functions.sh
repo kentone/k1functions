@@ -7,14 +7,11 @@ function k1simplehttplist () {
         echo 'Usage: simplehttplist <interface>. ex: simplehttplist eth0'
         return
     fi
-
     address=$(ifconfig "$interface" 2> /dev/null | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p')
-
     for file in *
     do
         echo http://"$address":8080/"$file"
     done
-
     python -m SimpleHTTPServer 8080
 }
 
@@ -26,8 +23,8 @@ function k1getifaces () {
         if [[ -n "$IP" ]]
         then       
             echo "$iface"
-        echo "$IP"
-        echo '············'
+            echo "$IP"
+            echo '············'
         fi
     done
 }
@@ -71,8 +68,13 @@ function k1upgrade () {
         sudo reflector --verbose --country='Spain' --country='Germany'  --country='France'  -l 10 -p http --sort rate --save /etc/pacman.d/mirrorlist
         sudo pacman -Sc --noconfirm
         sudo pacman -Syu --noconfirm
-        if [[ -z $(which yay | grep found) ]]
+        if [[ -z $(which paru | grep found) ]]
         then
+            sudo rm ~/.cache/paru
+            paru -Syu --aur --noconfirm
+        elif [[ -z $(which yay | grep found) ]]
+        then
+            sudo rm ~/.cache/yay
             yay -Syu --aur --noconfirm
         fi
     fi
@@ -127,10 +129,10 @@ function k1rec () {
 }
 
 function k1location () {
-echo '───────────────────────────────────── ─ ─ ─ ─ ┄ ┄ · 
-k1functions: **L O A D E D**'" from $(pwd)"'
-───────────────────────────────────── ─ ─ ─ ─ ┄ ┄ · 
-'
+    echo '───────────────────────────────────── ─ ─ ─ ─ ┄ ┄ · 
+    k1functions: **L O A D E D**'" from $(pwd)"'
+    ───────────────────────────────────── ─ ─ ─ ─ ┄ ┄ · 
+    '
 }
 
 #k1location
