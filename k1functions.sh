@@ -70,11 +70,11 @@ function k1upgrade () {
         sudo pacman -Syu --noconfirm
         if [[ -z $(which paru | grep found) ]]
         then
-            sudo rm ~/.cache/paru
+            sudo rm -rf ~/.cache/paru
             paru -Syu --aur --noconfirm
         elif [[ -z $(which yay | grep found) ]]
         then
-            sudo rm ~/.cache/yay
+            sudo rm -rf ~/.cache/yay
             yay -Syu --aur --noconfirm
         fi
     fi
